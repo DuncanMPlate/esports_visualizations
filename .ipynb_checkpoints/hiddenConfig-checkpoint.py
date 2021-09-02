@@ -1,1 +1,1 @@
-password = "PASSWORD_HERE"
+password = "PASSWORD"
