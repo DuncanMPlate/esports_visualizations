@@ -1,1 +1,1 @@
-password = "YOUR LOCAL SQL PASSWORD HERE"
+password = "PASSWORD_HERE"
