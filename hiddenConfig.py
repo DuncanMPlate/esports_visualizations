@@ -1,0 +1,1 @@
+password = "YOUR LOCAL SQL PASSWORD HERE"
