@@ -1,176 +1,267 @@
-// sourced scripts from https://observablehq.com/@d3/bar-chart-race-explained
+// sourced scripts from https://codesandbox.io/s/bar-chart-race-eop0s?file=/src/BarChartRace.js:0-6654
+import * as d3 from "d3";
 
-data = d3.csvParse(await FileAttachment("category-brands.csv").text(), d3.autoType);
+export function BarChartRace(chartId, extendedSettings) {
+  const chartSettings = {
+    width: 500,
+    height: 400,
+    padding: 40,
+    titlePadding: 5,
+    columnPadding: 0.4,
+    ticksInXAxis: 5,
+    duration: 3500,
+    ...extendedSettings
+  };
 
+  chartSettings.innerWidth = chartSettings.width - chartSettings.padding * 2;
+  chartSettings.innerHeight = chartSettings.height - chartSettings.padding * 2;
 
-chart = {
-  replay;
+  const chartDataSets = [];
+  let chartTransition;
+  let timerStart, timerEnd;
+  let currentDataSetIndex = 0;
+  let elapsedTime = chartSettings.duration;
 
-  var svg = d3.create("svg")
-      .attr("viewBox", [0, 0, width, height]);
+  const chartContainer = d3.select(`#${chartId} .chart-container`);
+  const xAxisContainer = d3.select(`#${chartId} .x-axis`);
+  const yAxisContainer = d3.select(`#${chartId} .y-axis`);
 
-  var updateBars = bars(svg);
-  var updateAxis = axis(svg);
-  var updateLabels = labels(svg);
-  var updateTicker = ticker(svg);
+  const xAxisScale = d3.scaleLinear().range([0, chartSettings.innerWidth]);
 
-  yield svg.node();
+  const yAxisScale = d3
+    .scaleBand()
+    .range([0, chartSettings.innerHeight])
+    .padding(chartSettings.columnPadding);
 
-  for (var keyframe of keyframes) {
-    var transition = svg.transition()
-        .duration(duration)
+  d3.select(`#${chartId}`)
+    .attr("width", chartSettings.width)
+    .attr("height", chartSettings.height);
+
+  chartContainer.attr(
+    "transform",
+    `translate(${chartSettings.padding} ${chartSettings.padding})`
+  );
+
+  chartContainer
+    .select(".current-date")
+    .attr(
+      "transform",
+      `translate(${chartSettings.innerWidth} ${chartSettings.innerHeight})`
+    );
+
+  function draw({ dataSet, date: currentDate }, transition) {
+    const { innerHeight, ticksInXAxis, titlePadding } = chartSettings;
+    const dataSetDescendingOrder = dataSet.sort(
+      ({ value: firstValue }, { value: secondValue }) =>
+        secondValue - firstValue
+    );
+
+    chartContainer.select(".current-date").text(currentDate);
+
+    xAxisScale.domain([0, dataSetDescendingOrder[0].value]);
+    yAxisScale.domain(dataSetDescendingOrder.map(({ name }) => name));
+
+    xAxisContainer.transition(transition).call(
+      d3
+        .axisTop(xAxisScale)
+        .ticks(ticksInXAxis)
+        .tickSize(-innerHeight)
+    );
+
+    yAxisContainer
+      .transition(transition)
+      .call(d3.axisLeft(yAxisScale).tickSize(0));
+
+    // The general update Pattern in d3.js
+
+    // Data Binding
+    const barGroups = chartContainer
+      .select(".columns")
+      .selectAll("g.column-container")
+      .data(dataSetDescendingOrder, ({ name }) => name);
+
+    // Enter selection
+    const barGroupsEnter = barGroups
+      .enter()
+      .append("g")
+      .attr("class", "column-container")
+      .attr("transform", `translate(0,${innerHeight})`);
+
+    barGroupsEnter
+      .append("rect")
+      .attr("class", "column-rect")
+      .attr("width", 0)
+      .attr("height", yAxisScale.step() * (1 - chartSettings.columnPadding));
+
+    barGroupsEnter
+      .append("text")
+      .attr("class", "column-title")
+      .attr("y", (yAxisScale.step() * (1 - chartSettings.columnPadding)) / 2)
+      .attr("x", -titlePadding)
+      .text(({ name }) => name);
+
+    barGroupsEnter
+      .append("text")
+      .attr("class", "column-value")
+      .attr("y", (yAxisScale.step() * (1 - chartSettings.columnPadding)) / 2)
+      .attr("x", titlePadding)
+      .text(0);
+
+    // Update selection
+    const barUpdate = barGroupsEnter.merge(barGroups);
+
+    barUpdate
+      .transition(transition)
+      .attr("transform", ({ name }) => `translate(0,${yAxisScale(name)})`)
+      .attr("fill", "normal");
+
+    barUpdate
+      .select(".column-rect")
+      .transition(transition)
+      .attr("width", ({ value }) => xAxisScale(value));
+
+    barUpdate
+      .select(".column-title")
+      .transition(transition)
+      .attr("x", ({ value }) => xAxisScale(value) - titlePadding);
+
+    barUpdate
+      .select(".column-value")
+      .transition(transition)
+      .attr("x", ({ value }) => xAxisScale(value) + titlePadding)
+      .tween("text", function ({ value }) {
+        const interpolateStartValue =
+          elapsedTime === chartSettings.duration
+            ? this.currentValue || 0
+            : +this.innerHTML;
+
+        const interpolate = d3.interpolate(interpolateStartValue, value);
+        this.currentValue = value;
+
+        return function (t) {
+          d3.select(this).text(Math.ceil(interpolate(t)));
+        };
+      });
+
+    // Exit selection
+    const bodyExit = barGroups.exit();
+
+    bodyExit
+      .transition(transition)
+      .attr("transform", `translate(0,${innerHeight})`)
+      .on("end", function () {
+        d3.select(this).attr("fill", "none");
+      });
+
+    bodyExit
+      .select(".column-title")
+      .transition(transition)
+      .attr("x", 0);
+
+    bodyExit
+      .select(".column-rect")
+      .transition(transition)
+      .attr("width", 0);
+
+    bodyExit
+      .select(".column-value")
+      .transition(transition)
+      .attr("x", titlePadding)
+      .tween("text", function () {
+        const interpolate = d3.interpolate(this.currentValue, 0);
+        this.currentValue = 0;
+
+        return function (t) {
+          d3.select(this).text(Math.ceil(interpolate(t)));
+        };
+      });
+
+    return this;
+  }
+
+  function addDataset(dataSet) {
+    chartDataSets.push(dataSet);
+
+    return this;
+  }
+
+  function addDatasets(dataSets) {
+    chartDataSets.push.apply(chartDataSets, dataSets);
+
+    return this;
+  }
+
+  function setTitle(title) {
+    d3.select(".chart-title")
+      .attr("x", chartSettings.width / 2)
+      .attr("y", -chartSettings.padding / 2)
+      .text(title);
+
+    return this;
+  }
+
+  /* async function render() {
+    for (const chartDataSet of chartDataSets) {
+      chartTransition = chartContainer
+        .transition()
+        .duration(chartSettings.duration)
         .ease(d3.easeLinear);
 
-    // Extract the top bar’s value.
-    x.domain([0, keyframe[1][0].value]);
+      draw(chartDataSet, chartTransition);
 
-    updateAxis(keyframe, transition);
-    updateBars(keyframe, transition);
-    updateLabels(keyframe, transition);
-    updateTicker(keyframe, transition);
-
-    invalidation.then(() => svg.interrupt());
-    await transition.end();
-  }
-};
-duration = 250;
-d3.group(data, d => d.name);
-n = 12;
-datevalues = Array.from(d3.rollup(data, ([d]) => d.value, d => +d.date, d => d.name))
-  .map(([date, data]) => [new Date(date), data])
-  .sort(([a], [b]) => d3.ascending(a, b));
-
-function rank(value) {
-  var data = Array.from(names, name => ({name, value: value(name)}));
-  data.sort((a, b) => d3.descending(a.value, b.value));
-  for (let i = 0; i < data.length; ++i) data[i].rank = Math.min(n, i);
-  return data;
-};
-
-keyframes = {
-  var keyframes = [];
-  let ka, a, kb, b;
-  for ([[ka, a], [kb, b]] of d3.pairs(datevalues)) {
-    for (let i = 0; i < k; ++i) {
-      var t = i / k;
-      keyframes.push([
-        new Date(ka * (1 - t) + kb * t),
-        rank(name => (a.get(name) || 0) * (1 - t) + (b.get(name) || 0) * t)
-      ]);
+      await chartTransition.end();
     }
+  } */
+
+  async function render(index = 0) {
+    currentDataSetIndex = index;
+    timerStart = d3.now();
+
+    chartTransition = chartContainer
+      .transition()
+      .duration(elapsedTime)
+      .ease(d3.easeLinear)
+      .on("end", () => {
+        if (index < chartDataSets.length) {
+          elapsedTime = chartSettings.duration;
+          render(index + 1);
+        } else {
+          d3.select("button").text("Play");
+        }
+      })
+      .on("interrupt", () => {
+        timerEnd = d3.now();
+      });
+
+    if (index < chartDataSets.length) {
+      draw(chartDataSets[index], chartTransition);
+    }
+
+    return this;
   }
-  keyframes.push([new Date(kb), rank(name => b.get(name) || 0)]);
-  return keyframes;
-};
 
-bars = ƒ(svg);
+  function stop() {
+    d3.select(`#${chartId}`)
+      .selectAll("*")
+      .interrupt();
 
-function bars(svg) {
-  let bar = svg.append("g")
-      .attr("fill-opacity", 0.6)
-    .selectAll("rect");
-
-  return ([date, data], transition) => bar = bar
-    .data(data.slice(0, n), d => d.name)
-    .join(
-      enter => enter.append("rect")
-        .attr("fill", color)
-        .attr("height", y.bandwidth())
-        .attr("x", x(0))
-        .attr("y", d => y((prev.get(d) || d).rank))
-        .attr("width", d => x((prev.get(d) || d).value) - x(0)),
-      update => update,
-      exit => exit.transition(transition).remove()
-        .attr("y", d => y((next.get(d) || d).rank))
-        .attr("width", d => x((next.get(d) || d).value) - x(0))
-    )
-    .call(bar => bar.transition(transition)
-      .attr("y", d => y(d.rank))
-      .attr("width", d => x(d.value) - x(0)));
-};
-labels = ƒ(svg);
-function labels(svg) {
-  let label = svg.append("g")
-      .style("font", "bold 12px var(--sans-serif)")
-      .style("font-variant-numeric", "tabular-nums")
-      .attr("text-anchor", "end")
-    .selectAll("text");
-
-  return ([date, data], transition) => label = label
-    .data(data.slice(0, n), d => d.name)
-    .join(
-      enter => enter.append("text")
-        .attr("transform", d => `translate(${x((prev.get(d) || d).value)},${y((prev.get(d) || d).rank)})`)
-        .attr("y", y.bandwidth() / 2)
-        .attr("x", -6)
-        .attr("dy", "-0.25em")
-        .text(d => d.name)
-        .call(text => text.append("tspan")
-          .attr("fill-opacity", 0.7)
-          .attr("font-weight", "normal")
-          .attr("x", -6)
-          .attr("dy", "1.15em")),
-      update => update,
-      exit => exit.transition(transition).remove()
-        .attr("transform", d => `translate(${x((next.get(d) || d).value)},${y((next.get(d) || d).rank)})`)
-        .call(g => g.select("tspan").tween("text", d => textTween(d.value, (next.get(d) || d).value)))
-    )
-    .call(bar => bar.transition(transition)
-      .attr("transform", d => `translate(${x(d.value)},${y(d.rank)})`)
-      .call(g => g.select("tspan").tween("text", d => textTween((prev.get(d) || d).value, d.value))))
-};
-
-textTween = ƒ(a, b);
-function textTween(a, b) {
-  var i = d3.interpolateNumber(a, b);
-  return function(t) {
-    this.textContent = formatNumber(i(t));
-  };
-};
-
-axis = ƒ(svg);
-function axis(svg) {
-  var g = svg.append("g")
-      .attr("transform", `translate(0,${margin.top})`);
-
-  var axis = d3.axisTop(x)
-      .ticks(width / 160)
-      .tickSizeOuter(0)
-      .tickSizeInner(-barSize * (n + y.padding()));
-
-  return (_, transition) => {
-    g.transition(transition).call(axis);
-    g.select(.tick:first-of-type text").remove();
-    g.selectAll(".tick:not(:first-of-type) line").attr("stroke", "white");
-    g.select(".domain").remove();
-  };
-};
-
-ticker = ƒ(svg);
-function ticker(svg) {
-  var now = svg.append("text")
-      .style("font", `bold ${barSize}px var(--sans-serif)`)
-      .style("font-variant-numeric", "tabular-nums")
-      .attr("text-anchor", "end")
-      .attr("x", width - 6)
-      .attr("y", margin.top + barSize * (n - 0.45))
-      .attr("dy", "0.32em")
-      .text(formatDate(keyframes[0][0]));
-
-  return ([date], transition) => {
-    transition.end().then(() => now.text(formatDate(date)));
-  };
-};
-
-color = ƒ(d)
-color = {
-  const scale = d3.scaleOrdinal(d3.schemeTableau10);
-  if (data.some(d => d.category !== undefined)) {
-    const categoryByName = new Map(data.map(d => [d.name, d.category]))
-    scale.domain(Array.from(categoryByName.values()));
-    return d => scale(categoryByName.get(d.name));
+    return this;
   }
-  return d => scale(d.name);
-};
-x = ƒ(n);
-x = d3.scaleLinear([0, 1], [margin.left, width - margin.right]);
+
+  function start() {
+    elapsedTime -= timerEnd - timerStart;
+
+    render(currentDataSetIndex);
+
+    return this;
+  }
+
+  return {
+    addDataset,
+    addDatasets,
+    render,
+    setTitle,
+    start,
+    stop
+  };
+}
