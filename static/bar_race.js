@@ -1,31 +1,23 @@
 // sourced scripts from https://codesandbox.io/s/bar-chart-race-eop0s?file=/src/BarChartRace.js:0-6654
 
-var postgres = require('postgres');
-var con = postgres.createConnection({
-	host: "localhost",
-	user: "postgres",
-	password: "Novus",
-	database: "esports_db"
-});
-
-con.connect(function(err) {
-	if (err) throw err;
-	con.query("Select * FROM historical_data", function(err, result, fields) {
-		if (err) throw err;
-		console.log(result);
-	});
-});
-
+//var pg = require('pg');
+//var connectionString = "postgres://postgres:Novus@PostgreSQL11/ip:port/esports_db";
+//var pgClient = new pg.Client(connectionString);
+//pgClient.connect();
+//var query = pgClient.query("SELECT 'Date', 'Game', 'Earnings' from historical_data");
+var data = fetch(`/barrace`).then(function (response) {
+  return response.json();
+})
 function generateDataSets({ size = 1 }) {
-	const dataSets = result;
-	const currentYear = +timeFormat("%Y")(new Date());
+	const dataSets = data;
+	//const currentYear = +timeFormat("%Y")(new Date());
 	
-	for (let i = 0; i < size; i++) {
-		dataSets.push({
-			date: currentYear - (size - (i + 1)),
+	//for (let i = 0; i < size; i++) {
+		//dataSets.push({
+			//date: currentYear - (size - (i + 1)),
 			
-		});
-	}
+		//});
+	//}
 
 	return dataSets;
 }
