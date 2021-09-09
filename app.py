@@ -21,12 +21,13 @@ def home():
 
 @app.route('/barrace')
 def fetch_records():
-    records = engine.execute('select * from historical_data').fetchall()
+    records = engine.execute('select * from historical_data order by Date asc').fetchall()
     return_data=[]
     for each_record in records: 
-        one_row=[]
-        for each_column in each_record[0:]: 
-            one_row.append(each_column)
+        one_row = {"date" : each_record[0], "dataSet" : [{'name' : each_record[1],
+                                                          'value' : each_record[2]
+                                                         }]
+                  }
         return_data.append(one_row)
     return jsonify(return_data)
 
