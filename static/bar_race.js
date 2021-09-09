@@ -5,21 +5,74 @@
 //var pgClient = new pg.Client(connectionString);
 //pgClient.connect();
 //var query = pgClient.query("SELECT 'Date', 'Game', 'Earnings' from historical_data");
-let data = fetch(`/barrace`).then(function (response) {  
-  console.log(response);
-  return response.json();
-  }).then(function (grab){
-    let chart_data = d3.json('returned_data');
-  console.log(chart_data);
-  });
+// let data = fetch(`/barrace`).then(function (response) {  
+//   console.log(response);
+//   //return response.json();
+//   }).then(function (grab){
+//     //let chart_data = d3.json('return_data');
+//     d3.json('/')
+//   console.log(chart_data);
+//   });
 
 //let chart_data = data(response);
 //console.log(chart_data);
 //chart_data.then(function(result) {
   //console.log(result)
 //});
+
 function generateDataSets(chart_data) {
-	const dataSets = chart_data;
+    // dummy data
+    var brands = [
+    "Alcatel",
+    "Apple",
+    "Google",
+    "Huawei",
+    "LG",
+    "Motorola",
+    "Nokia",
+    "Razer",
+    "Samsung",
+    "Xiaomi",
+    "HTC",
+    "Sony",
+    "BlackBerry",
+    "Palm",
+    "ZTE",
+    "Oppo",
+    "Lenovo"
+  ];
+  var size=1
+  var dataSets = [];
+  var currentYear = d3.timeFormat("%Y")(new Date());
+  var maxLimitForValue = 2000;
+  var minLimitForValue = 200;
+  var maximumModelCount = 10;
+
+  for (let i = 0; i < size; i++) {
+    dataSets.push({
+      date: currentYear - (size - (i + 1)), // 1900 vs. 1900-01-01
+      dataSet: brands
+        .sort(function() {
+          return Math.random() - 0.5;
+        })
+        .slice(0, maximumModelCount)
+        .map(brand => ({
+          name: brand,
+          value:
+            Math.random() * (maxLimitForValue - minLimitForValue) +
+            minLimitForValue
+        }))
+    });
+  }
+  return dataSets;
+  // dummy data
+
+	// const dataSets = chart_data;
+  // d3.json('/barrace').then(function(dataSets){
+  //   console.log(dataSets)
+  // for each row in the data, convert some value to numerical
+  //   return dataSets
+  // })
 	//const currentYear = +timeFormat("%Y")(new Date());
 	
 	//for (let i = 0; i < size; i++) {
@@ -29,7 +82,7 @@ function generateDataSets(chart_data) {
 		//});
 	//}
 
-	return dataSets;
+	// return dataSets;
 }
 
 function BarChartRace(chartId, extendedSettings) {
