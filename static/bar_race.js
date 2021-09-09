@@ -1,7 +1,36 @@
 // sourced scripts from https://codesandbox.io/s/bar-chart-race-eop0s?file=/src/BarChartRace.js:0-6654
-import * as d3 from "d3";
 
-export function BarChartRace(chartId, extendedSettings) {
+var postgres = require('postgres');
+var con = postgres.createConnection({
+	host: "localhost",
+	user: "postgres",
+	password: "Novus",
+	database: "esports_db"
+});
+
+con.connect(function(err) {
+	if (err) throw err;
+	con.query("Select * FROM historical_data", function(err, result, fields) {
+		if (err) throw err;
+		console.log(result);
+	});
+});
+
+function generateDataSets({ size = 1 }) {
+	const dataSets = result;
+	const currentYear = +timeFormat("%Y")(new Date());
+	
+	for (let i = 0; i < size; i++) {
+		dataSets.push({
+			date: currentYear - (size - (i + 1)),
+			
+		});
+	}
+
+	return dataSets;
+}
+
+function BarChartRace(chartId, extendedSettings) {
   const chartSettings = {
     width: 500,
     height: 400,
@@ -265,3 +294,22 @@ export function BarChartRace(chartId, extendedSettings) {
     stop
   };
 }
+const myChart = new BarChartRace("bar-chart-race");
+
+myChart
+  .setTitle("Esports By the Numbers")
+  .addDatasets(generateDataSets({ size: 5 }))
+  .render();
+
+d3Select("button").on("click", function () {
+  if (this.innerHTML === "Stop") {
+    this.innerHTML = "Resume";
+    myChart.stop();
+  } else if (this.innerHTML === "Resume") {
+    this.innerHTML = "Stop";
+    myChart.start();
+  } else {
+    this.innerHTML = "Stop";
+    myChart.render();
+  }
+});

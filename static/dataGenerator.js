@@ -18,24 +18,11 @@ con.connect(function(err) {
 export function generateDataSets({ size = 1 }) {
 	const dataSets = result;
 	const currentYear = +timeFormat("%Y")(new Date());
-	const maxLimitForValue = 2000;
-	const minLimitForValue = 200;
-	const maximumModelCount = 10;
-
+	
 	for (let i = 0; i < size; i++) {
 		dataSets.push({
 			date: currentYear - (size - (i + 1)),
-			dataSet: brands
-				.sort(function () {
-					return Math.random() - 0.5;
-				})
-				.slice(0, maximumModelCount)
-				.map(brand => ({
-					name: brand,
-					value:
-						Math.random() * (maxLimitForValue - minLimitForValue) +
-						minLimitForValue
-				}))
+			
 		});
 	}
 

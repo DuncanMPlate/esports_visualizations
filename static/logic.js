@@ -1,4 +1,4 @@
-import "styles.css";
+
 import { generateDataSets } from "dataGenerator.js";
 import { BarChartRace } from "bar_race.js";
 
@@ -7,7 +7,7 @@ import { select as d3Select } from "d3";
 const myChart = new BarChartRace("bar-chart-race");
 
 myChart
-	.setTitle("Bar Chart Race Title")
+	.setTitle("Esports By the Numbers")
 	.addDatasets(generateDataSets({ size: 5 }))
 	.render();
 
