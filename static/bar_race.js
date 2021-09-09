@@ -6,9 +6,10 @@
 //pgClient.connect();
 //var query = pgClient.query("SELECT 'Date', 'Game', 'Earnings' from historical_data");
 var data = fetch(`/barrace`).then(function (response) {
+  console.log(response)
   return response.json();
-})
-function generateDataSets({ size = 1 }) {
+  });
+function generateDataSets(data) {
 	const dataSets = data;
 	//const currentYear = +timeFormat("%Y")(new Date());
 	
