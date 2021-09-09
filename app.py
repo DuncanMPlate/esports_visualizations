@@ -29,13 +29,13 @@ engine = create_engine(connection_url)
 def home(): 
     return render_template('index.html')
 
-@app.route('/fetch')
+@app.route('/barrace')
 def fetch_records():
-    records = engine.execute('select * from team_data').fetchall()
+    records = engine.execute('select * from historical_data').fetchall()
     return_data=[]
     for each_record in records: 
         one_row=[]
-        for each_column in each_record[1:]: 
+        for each_column in each_record[0:]: 
             one_row.append(each_column)
         return_data.append(one_row)
     return jsonify(return_data)
