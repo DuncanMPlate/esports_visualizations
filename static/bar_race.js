@@ -5,12 +5,21 @@
 //var pgClient = new pg.Client(connectionString);
 //pgClient.connect();
 //var query = pgClient.query("SELECT 'Date', 'Game', 'Earnings' from historical_data");
-var data = fetch(`/barrace`).then(function (response) {
-  console.log(response)
+let data = fetch(`/barrace`).then(function (response) {  
+  console.log(response);
   return response.json();
+  }).then(function (grab){
+    let chart_data = d3.json('returned_data');
+  console.log(chart_data);
   });
-function generateDataSets(data) {
-	const dataSets = data;
+
+//let chart_data = data(response);
+//console.log(chart_data);
+//chart_data.then(function(result) {
+  //console.log(result)
+//});
+function generateDataSets(chart_data) {
+	const dataSets = chart_data;
 	//const currentYear = +timeFormat("%Y")(new Date());
 	
 	//for (let i = 0; i < size; i++) {
@@ -25,8 +34,8 @@ function generateDataSets(data) {
 
 function BarChartRace(chartId, extendedSettings) {
   const chartSettings = {
-    width: 500,
-    height: 400,
+    width: 800,
+    height: 600,
     padding: 40,
     titlePadding: 5,
     columnPadding: 0.4,
