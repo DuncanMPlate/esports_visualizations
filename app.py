@@ -22,23 +22,43 @@ engine = create_engine(connection_url)
 #     lon=Column(Float)
 #     description=Column(String(255))
 
+
+app = Flask(__name__)
+
+connection_url = f'postgresql://postgres:{password}@localhost:5432/esports_db'
+# connection_url = os.environ.get('DATABASE_URL').replace('postgres', 'postgresql')
+engine = create_engine(connection_url)
+
+# ##### Setting up DB #####
+# Base=declarative_base()
+# class ufo(Base):
+#     __tablename__='ufo'
+#     id=Column(Integer, primary_key=True)
+#     shape=Column(String(255))
+#     lat=Column(Float)
+#     lon=Column(Float)
+#     description=Column(String(255))
+
 # Base.metadata.create_all(engine)
 # #########################
 
+
 @app.route('/')
-def home(): 
+def home():
     return render_template('index.html')
 
-@app.route('/fetch')
+
+@app.route('/barrace')
 def fetch_records():
-    records = engine.execute('select * from team_data').fetchall()
-    return_data=[]
-    for each_record in records: 
-        one_row=[]
-        for each_column in each_record[1:]: 
+    records = engine.execute('select * from historical_data').fetchall()
+    return_data = []
+    for each_record in records:
+        one_row = []
+        for each_column in each_record[0:]:
             one_row.append(each_column)
         return_data.append(one_row)
     return jsonify(return_data)
 
-if __name__=='__main__': 
+
+if __name__ == '__main__':
     app.run()

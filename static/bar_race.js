@@ -293,7 +293,7 @@ myChart
   .addDatasets(generateDataSets({ size: 5 }))
   .render();
 
-d3Select("button").on("click", function () {
+d3.select("button").on("click", function () {
   if (this.innerHTML === "Stop") {
     this.innerHTML = "Resume";
     myChart.stop();
