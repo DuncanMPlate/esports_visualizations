@@ -50,15 +50,31 @@ def home():
 
 @app.route('/barrace')
 def fetch_records():
-    records = engine.execute('select * from historical_data').fetchall()
-    return_data = []
-    for each_record in records:
-        one_row = []
-        for each_column in each_record[0:]:
+    records = engine.execute('select * from grouped_bar_race_data').fetchall()
+    data=[]
+    ## Get the data from sql and store in array for management
+    for each_record in records: 
+        one_row=[]
+        for each_column in each_record[0:]: 
             one_row.append(each_column)
-        return_data.append(one_row)
+        data.append(one_row)
+    ## Set the base year (1998)
+    year = data[0][0]
+    ## Create empty lists to store manipulated data
+    year_dataset = []
+    return_data = []
+    ## Iterate through data
+    for i in data:
+        if i[0] == year:
+            newdata = {"name" : i[1], "value" : i[2]}
+            year_dataset.append(newdata)
+        else:
+            year_data = {"dataSet" : year_dataset, "date" : year}
+            return_data.append(year_data)
+            year = i[0]
+            year_dataset = []
+    ## Return the final array as json
     return jsonify(return_data)
-
 
 if __name__ == '__main__':
     app.run()
