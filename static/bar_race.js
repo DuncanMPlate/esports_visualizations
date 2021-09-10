@@ -197,22 +197,35 @@ const games = [
  
 function generateDataSets({size = 1}) {
 	// const dataSets = chart_data;
+  var dataSets = [];
   const maximumModelCount = 10;
- var currentYear = d3.timeFormat("$Y")(new Date());
-   d3.json('/barrace').then(function(dataSets){
-    console.log(dataSets)
-  // for each row in the data, convert some value to numerical
+// var currentYear = d3.timeFormat("$Y")(new Date());
+   d3.json('/barrace').then(function(data){
+    console.log(data)
+   //for each row in the data, convert some value to numerical
    for (let i = 0; i <size; i++) {
      dataSets.push({
-       date: currentYear - (size - (i +1)),
-       //dataSet : games,
-       //value:
-
-     }).slice(0, maximumModelCount);
-   };
+       //date: currentYear - (size - (i +1)),
+       dataSet : games
+       .sort(function() {
+          return Math.random() - 0.5;
+        })
+        .slice(0, maximumModelCount)
+        .map(game => ({
+          name: game,
+          value: fetch('/barrace').then(function (text){
+            if(text.name == game) text.value}),
+          date: fetch('/barrace').then(function(text){
+            if(text.name == game) text.date})
+           
+       })),
+   });
+  }
+  console.log(dataSets)
 	 return dataSets;
   });
 };
+
 
 function BarChartRace(chartId, extendedSettings) {
   const chartSettings = {

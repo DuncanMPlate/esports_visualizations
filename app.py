@@ -51,11 +51,11 @@ def home():
 @app.route('/barrace')
 def fetch_records():
     records = engine.execute('select * from grouped_bar_race_data').fetchall()
-    data=[]
+    data = []
     ## Get the data from sql and store in array for management
-    for each_record in records: 
-        one_row=[]
-        for each_column in each_record[0:]: 
+    for each_record in records:
+        one_row = []
+        for each_column in each_record[0:]:
             one_row.append(each_column)
         data.append(one_row)
     ## Set the base year (1998)
@@ -66,10 +66,10 @@ def fetch_records():
     ## Iterate through data
     for i in data:
         if i[0] == year:
-            newdata = {"name" : i[1], "value" : i[2]}
+            newdata = {"name": i[1], "value": i[2]}
             year_dataset.append(newdata)
         else:
-            year_data = {"dataSet" : year_dataset, "date" : year}
+            year_data = {"dataSet": year_dataset, "date": year}
             return_data.append(year_data)
             year = i[0]
             year_dataset = []
