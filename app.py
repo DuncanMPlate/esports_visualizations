@@ -23,7 +23,7 @@ def home():
 
 @app.route('/barrace')
 def fetch_records():
-    records = engine.execute('select * from grouped_bar_race_data').fetchall()
+    records = engine.execute('select * from small_bar_race_data').fetchall()
     data=[]
     ## Get the data from sql and store in array for management
     for each_record in records: 
@@ -42,10 +42,12 @@ def fetch_records():
             newdata = {"name" : i[1], "value" : i[2]}
             year_dataset.append(newdata)
         else:
-            year_data = {"dataSet" : year_dataset, "date" : year}
+            year_data = {"date" : year, "dataSet" : year_dataset}
             return_data.append(year_data)
             year = i[0]
             year_dataset = []
+            newdata = {"name" : i[1], "value" : i[2]}
+            year_dataset.append(newdata)
     ## Return the final array as json
     return jsonify(return_data)
 

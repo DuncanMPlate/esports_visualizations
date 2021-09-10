@@ -2,18 +2,16 @@
 
 
 function getData() {
-    d3.json('/barrace').then(function(dataSets){
-    console.log(dataSets)
-//   for each row in the data, convert some value to numerical
-    return dataSets
+    d3.json('/barrace').then(function(data){
+        console.log(data)
+        return data;
   })
 };
 
-
 function BarChartRace(chartId, extendedSettings) {
   const chartSettings = {
-    width: 800,
-    height: 600,
+    width: 500,
+    height: 400,
     padding: 40,
     titlePadding: 5,
     columnPadding: 0.4,
@@ -138,7 +136,7 @@ function BarChartRace(chartId, extendedSettings) {
       .select(".column-value")
       .transition(transition)
       .attr("x", ({ value }) => xAxisScale(value) + titlePadding)
-      .tween("text", function ({ value }) {
+      .tween("text", function({ value }) {
         const interpolateStartValue =
           elapsedTime === chartSettings.duration
             ? this.currentValue || 0
@@ -147,7 +145,7 @@ function BarChartRace(chartId, extendedSettings) {
         const interpolate = d3.interpolate(interpolateStartValue, value);
         this.currentValue = value;
 
-        return function (t) {
+        return function(t) {
           d3.select(this).text(Math.ceil(interpolate(t)));
         };
       });
@@ -158,7 +156,7 @@ function BarChartRace(chartId, extendedSettings) {
     bodyExit
       .transition(transition)
       .attr("transform", `translate(0,${innerHeight})`)
-      .on("end", function () {
+      .on("end", function() {
         d3.select(this).attr("fill", "none");
       });
 
@@ -176,11 +174,11 @@ function BarChartRace(chartId, extendedSettings) {
       .select(".column-value")
       .transition(transition)
       .attr("x", titlePadding)
-      .tween("text", function () {
+      .tween("text", function() {
         const interpolate = d3.interpolate(this.currentValue, 0);
         this.currentValue = 0;
 
-        return function (t) {
+        return function(t) {
           d3.select(this).text(Math.ceil(interpolate(t)));
         };
       });
@@ -209,16 +207,18 @@ function BarChartRace(chartId, extendedSettings) {
     return this;
   }
 
-  async function render() {
+  /* async function render() {
     for (const chartDataSet of chartDataSets) {
       chartTransition = chartContainer
         .transition()
         .duration(chartSettings.duration)
         .ease(d3.easeLinear);
-      draw(chartDataSet, chartTransition);
-      await chartTransition.end();
-    }
-  }
+
+//       draw(chartDataSet, chartTransition);
+
+//       await chartTransition.end();
+//     }
+//   } */
 
   async function render(index = 0) {
     currentDataSetIndex = index;
@@ -275,9 +275,12 @@ function BarChartRace(chartId, extendedSettings) {
 
 const myChart = new BarChartRace("bar-chart-race");
 
-myChart.setTitle("Esports By the Numbers").addDatasets(getData()).render();
+myChart
+  .setTitle("Bar Chart Race Title")
+  .addDatasets(getData())
+  .render();
 
-d3.select("button").on("click", function () {
+d3.select("button").on("click", function() {
   if (this.innerHTML === "Stop") {
     this.innerHTML = "Resume";
     myChart.stop();
@@ -288,5 +291,4 @@ d3.select("button").on("click", function () {
     this.innerHTML = "Stop";
     myChart.render();
   }
-})
-
+});
