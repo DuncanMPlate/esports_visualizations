@@ -1,26 +1,31 @@
 // sourced scripts from https://codesandbox.io/s/bar-chart-race-eop0s?file=/src/BarChartRace.js:0-6654
 
 
-function getData() {
-    d3.json('/barrace').then(function(data){
-        console.log(data)
-        return data;
+d3.json('/barrace').then(function(data){
+    myChart
+//       .setTitle("Total Competitive Earnings Per Year Per Game")
+      .addDatasets(data)
+      .render();
   })
-};
+
+async function fetchData() {
+    fulfilled=await getData()
+    return fulfilled
+}
 
 function BarChartRace(chartId, extendedSettings) {
   const chartSettings = {
-    width: 500,
+    width: 900,
     height: 400,
     padding: 40,
     titlePadding: 5,
-    columnPadding: 0.4,
+    columnPadding: 0.3,
     ticksInXAxis: 5,
     duration: 3500,
     ...extendedSettings
   };
 
-  chartSettings.innerWidth = chartSettings.width - chartSettings.padding * 2;
+  chartSettings.innerWidth = chartSettings.width - chartSettings.padding * 2.7;
   chartSettings.innerHeight = chartSettings.height - chartSettings.padding * 2;
 
   const chartDataSets = [];
@@ -275,10 +280,10 @@ function BarChartRace(chartId, extendedSettings) {
 
 const myChart = new BarChartRace("bar-chart-race");
 
-myChart
-  .setTitle("Bar Chart Race Title")
-  .addDatasets(getData())
-  .render();
+// myChart
+//   .setTitle("Bar Chart Race Title")
+//   .addDatasets(generateDataSets({ size: 5 }))
+//   .render();
 
 d3.select("button").on("click", function() {
   if (this.innerHTML === "Stop") {
@@ -292,3 +297,4 @@ d3.select("button").on("click", function() {
     myChart.render();
   }
 });
+

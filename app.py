@@ -42,7 +42,9 @@ def fetch_records():
             newdata = {"name" : i[1], "value" : i[2]}
             year_dataset.append(newdata)
         else:
-            year_data = {"date" : year, "dataSet" : year_dataset}
+            year_data = {}
+            year_data["date"] =  year #{"date" : year, "dataSet" : year_dataset}
+            year_data["dataSet"] = year_dataset
             return_data.append(year_data)
             year = i[0]
             year_dataset = []

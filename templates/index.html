@@ -14,6 +14,7 @@
     crossorigin="" />
     <!-- Our CSS -->
     <link rel="stylesheet" type="text/css" href="../static/style.css">
+      <link href='https://fonts.googleapis.com/css?family=Oxygen' rel='stylesheet'>
     
 
     <title>Bar Chart Race</title>
@@ -21,16 +22,40 @@
   </head>
 
   <body>
-    <button>Stop</button>
-    <svg id="bar-chart-race">
-      <g class="chart-container">
-        <text class="chart-title"></text>
-        <g class="x-axis"></g>
-        <g class="y-axis"></g>
-        <g class="columns"></g>
-        <text class="current-date"></text>
-      </g>
-    </svg>
+      
+      
+      <!-- Side navigation -->
+<div class="sidenav">
+  <p>E-Sports Dashboard</p>
+</div>
+      
+      <div class="container" style="padding:50px">
+          <div class="row">
+              <h4 style="text-align: center">Total Competitive Earnings Per Year Per Game</h4>
+              <div class = "col colinfo">
+                  <div class="container">
+                    <button>Stop</button>
+                    <svg id="bar-chart-race">
+                      <g class="chart-container">
+                        <text class="chart-title"></text>
+                        <g class="x-axis"></g>
+                        <g class="y-axis"></g>
+                        <g class="columns"></g>
+                        <text class="current-date"></text>
+                      </g>
+                    </svg> 
+                  </div>
+              </div>
+          </div>
+        </div>
+      
+        <div class="container" style="padding:50px;">
+          <div class="row">
+              <p style="font-color=white;">Text</p>
+          </div>
+        </div>
+      
+      
     <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
     integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
     crossorigin=""></script>
@@ -39,5 +64,6 @@
     <!-- Plotly JS -->
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <script src="../static/bar_race.js"></script>
+      
   </body>
 </html>
