@@ -9,8 +9,8 @@ from hiddenConfig import password
 
 app=Flask(__name__)
 
-connection_url=f'postgresql://postgres:{password}@localhost:5432/esports_db'
-# connection_url = os.environ.get('DATABASE_URL').replace('postgres', 'postgresql')
+# connection_url=f'postgresql://postgres:{password}@localhost:5432/esports_db'
+connection_url = os.environ.get('DATABASE_URL').replace('postgres', 'postgresql')
 engine = create_engine(connection_url)
 morerecords = os.path.join(os.getcwd(), "Resources", "map_trends.geojson")
 
