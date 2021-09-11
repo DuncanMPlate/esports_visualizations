@@ -59,8 +59,8 @@ def fetch_records():
 def choro():
     with open(morerecords) as f:
         gj = geojson.load(f)
-    features = gj['features'][0]
-    return(features)
+    features = gj['features']
+    return jsonify(features)
 
 
 @app.route('/scatter')
