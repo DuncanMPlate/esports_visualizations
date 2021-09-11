@@ -15,7 +15,7 @@ d3.json('/scatter').then(data=>{
         let traceData1 = [trace1];
     
         let layout1 = {
-            title: "Player Earnings vs. Date vs Number of Players",
+            title: "Tournament vs. Date vs Number of Players",
             titlefont: {
                     color: 'white'
             },
@@ -83,7 +83,7 @@ d3.json('/scatter').then(data=>{
         let traceData2 = [trace2];
     
         let layout2 = {
-            title: "Player Earnings vs. Date",
+            title: "Tournament Earnings vs. Date",
             titlefont: {
                     color: 'white'
             },
