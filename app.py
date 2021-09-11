@@ -5,12 +5,12 @@ from sqlalchemy import Column, Integer, String, Float
 from sqlalchemy.orm import Session
 import os
 import geojson
-from hiddenConfig import password
+# from hiddenConfig import password
 
 app=Flask(__name__)
 
 # connection_url=f'postgresql://postgres:{password}@localhost:5432/esports_db'
-connection_url = os.environ.get('DATABASE_URL').replace('postgres', 'postgresql')
+connection_url = os.environ.get('DATABASE_URL_KL').replace('postgres', 'postgresql')
 engine = create_engine(connection_url)
 morerecords = os.path.join(os.getcwd(), "Resources", "map_trends.geojson")
 
