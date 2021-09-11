@@ -1,0 +1,138 @@
+/* The sidebar menu */
+.sidenav {
+  height: 100%; /* Full-height: remove this if you want "auto" height */
+  width: 160px; /* Set the width of the sidebar */
+  position: fixed; /* Fixed Sidebar (stay in place on scroll) */
+  z-index: 1; /* Stay on top */
+  top: 0; /* Stay at the top */
+  left: 0;
+  background-color: #303030; 
+  overflow-x: hidden; /* Disable horizontal scroll */
+  padding-top: 20px;
+}
+
+/* The navigation menu links */
+.sidenav p {
+  padding: 6px 8px 6px 16px;
+  text-decoration: none;
+  font-size: 25px;
+  color: #00FFFF;
+  display: block;
+}
+
+
+
+
+html,
+body {
+  display: flex;
+  flex-direction: column;
+    background-color: #292929;
+    color: white;
+    font-family: 'Oxygen';
+}
+
+html {
+    background-color: #242526;
+}
+
+button {
+  width: 80px;
+  height: 30px;
+  border-radius: 4px;
+  box-shadow: none;
+  outline: none;
+  cursor: pointer;
+    background-color: #303030;
+    color: #EBECF0;
+}
+
+
+/* .svg {
+     background-color: #303030;
+    -moz-border-radius-topleft: 20px;
+    -moz-border-radius-topright: 20px;
+    -moz-border-radius-bottomright: 20px;
+    -moz-border-radius-bottomleft: 20px;
+    -webkit-border-radius: 20px 20px 20px 20px;
+    border-radius: 20px 20px 20px 20px;
+    display: block;
+    margin: auto;
+}
+ */
+
+.chart-container .chart-title {
+  font-size: 18px;
+  fill: #EBECF0;
+  font-weight: bold;
+  text-anchor: middle;
+  dominant-baseline: center;
+      padding-bottom: 25px;
+}
+
+.chart-container .current-date {
+  font-size: 45px;
+  fill: #EBECF0;
+  text-anchor: end;
+}
+
+.y-axis text,
+.y-axis .domain,
+.x-axis .domain {
+  display: none;
+}
+
+.x-axis .tick line {
+    color: #EBECF0;
+/*   color: #d3d3d3; */
+}
+
+.x-axis .tick text {
+  color: #EBECF0;
+}
+
+.columns .column-container .column-rect {
+  fill: #00FFFF;
+}
+
+.columns .column-container .column-title {
+  text-anchor: end;
+  fill: #303030;
+  dominant-baseline: middle;
+  font-size: 14px;
+}
+
+.columns .column-container .column-value {
+  dominant-baseline: middle;
+  font-size: 14px;
+    fill: #EBECF0;
+}
+
+.scplot {
+    display: block;
+    margin: auto;
+}
+
+
+#map,
+  body,
+  html {
+    height: 500px;
+  }
+  
+  .leaflet-popup-content {
+    text-align: center;
+  }
+  
+  /* CSS from the leaflet-choropleth documentation */
+  .legend {
+    line-height: 18px;
+    color: #555;
+}
+.legend i {
+    width: 18px;
+    height: 18px;
+    float: left;
+    margin-right: 8px;
+    opacity: 0.7;
+}
