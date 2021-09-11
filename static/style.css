@@ -48,7 +48,7 @@ button {
 }
 
 
-svg {
+/* .svg {
      background-color: #303030;
     -moz-border-radius-topleft: 20px;
     -moz-border-radius-topright: 20px;
@@ -59,6 +59,7 @@ svg {
     display: block;
     margin: auto;
 }
+ */
 
 .chart-container .chart-title {
   font-size: 18px;
@@ -105,4 +106,9 @@ svg {
   dominant-baseline: middle;
   font-size: 14px;
     fill: #EBECF0;
+}
+
+.scplot {
+    display: block;
+    margin: auto;
 }

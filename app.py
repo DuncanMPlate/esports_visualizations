@@ -12,7 +12,7 @@ app=Flask(__name__)
 connection_url=f'postgresql://postgres:{password}@localhost:5432/esports_db'
 # connection_url = os.environ.get('DATABASE_URL').replace('postgres', 'postgresql')
 engine = create_engine(connection_url)
-morerecords = os.path.join(os.getcwd(), "Resources", "map_test.geojson")
+morerecords = os.path.join(os.getcwd(), "Resources", "map_trends.geojson")
 
 
 @app.route('/')
@@ -63,15 +63,23 @@ def choro():
     return(features)
 
 
-@app.route('/josiah')
+@app.route('/scatter')
 def chart():
-    records = engine.execute('select * from grouped_game_data').fetchall()
-    return_data=[]
+    records = engine.execute('select * from historical_data').fetchall()
+    return_data = []
+    x_data=[]
+    y_data=[]
+    game_data = []
+    player_data = []
     for each_record in records: 
-        one_row=[]
-        for each_column in each_record[0:]: 
-            one_row.append(each_column)
-        return_data.append(one_row)
+        x_data.append(each_record[0])
+        y_data.append(each_record[2])
+        game_data.append(each_record[1])
+        player_data.append(each_record[3])
+    return_data.append(x_data)
+    return_data.append(y_data)
+    return_data.append(game_data)
+    return_data.append(player_data)
     return jsonify(return_data) 
 
 

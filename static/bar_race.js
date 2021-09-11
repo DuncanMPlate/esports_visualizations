@@ -15,9 +15,9 @@ async function fetchData() {
 
 function BarChartRace(chartId, extendedSettings) {
   const chartSettings = {
-    width: 900,
+    width: 1000,
     height: 400,
-    padding: 40,
+    padding: 50,
     titlePadding: 5,
     columnPadding: 0.3,
     ticksInXAxis: 5,
@@ -25,7 +25,7 @@ function BarChartRace(chartId, extendedSettings) {
     ...extendedSettings
   };
 
-  chartSettings.innerWidth = chartSettings.width - chartSettings.padding * 2.7;
+  chartSettings.innerWidth = chartSettings.width - chartSettings.padding * 3;
   chartSettings.innerHeight = chartSettings.height - chartSettings.padding * 2;
 
   const chartDataSets = [];
