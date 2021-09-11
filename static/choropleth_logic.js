@@ -1,13 +1,7 @@
-// Creating the map object
-var myMap = L.map("map", {
-  center: [39.5, -98.35],
-  zoom: 4
-});
-
 // Adding the tile layer
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+streetmap = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-}).addTo(myMap);
+})
 
 function getColor(d) {
     return d > 99 ? '#800026' :
@@ -33,58 +27,88 @@ function style(feature) {
     };
 }
 
-// data_two6 = L.layerGroup();
-// data_two7 = L.layerGroup();
-// data_two8 = L.layerGroup();
-// data_two9 = L.layerGroup();
-// data_two10 = L.layerGroup();
-// data_two11 = L.layerGroup();
-// data_two12 = L.layerGroup();
-// data_two13 = L.layerGroup();
-// data_two14 = L.layerGroup();
-// data_two15 = L.layerGroup();
-// data_two16 = L.layerGroup();
-// data_two17 = L.layerGroup();
-// data_two18 = L.layerGroup();
-// data_two19 = L.layerGroup();
-// data_two20 = L.layerGroup();
-// data_two21 = L.layerGroup();
-
 
 
 // Get the data with d3.
 d3.json('/choropleth').then(function(data) {
-    console.log(data);
-    csgo6_layer = []
+    csgo_layer = []
     for (var i = 0; i < data.length; i++) {
-        for (const [key, value] of Object.entries(data[i].properties)) {
-              console.log(`${key}: ${value}`);
-        }
-       temp_var = L.geoJson(data[i], {style: style(data[i].properties[0])})
-        csgo6_layer.push(temp_var)
+       temp_var = L.geoJson(data[i], {style: style(data[i].properties["CounterStrike:(2017)"])})
+       csgo_layer.push(temp_var)
     }
-    csgo2006_layer = L.layerGroup(csgo6_layer)
-    console.log(csgo2006_layer)
-    csgo2006_layer.addTo(myMap)
-})
+    cs_layer = L.layerGroup(csgo_layer)
+    
+
+    dota_layer = []
+    for (var i = 0; i < data.length; i++) {
+       temp_var = L.geoJson(data[i], {style: style(data[i].properties["Dota2:(2017)"])})
+       dota_layer.push(temp_var)
+    }
+    dota2_layer = L.layerGroup(dota_layer)
+   
+    fort_layer = []
+    for (var i = 0; i < data.length; i++) {
+       temp_var = L.geoJson(data[i], {style: style(data[i].properties["Fortnite:(2017)"])})
+       fort_layer.push(temp_var)
+    }
+    frtnite_layer = L.layerGroup(fort_layer)
+    
+    l_layer = []
+    for (var i = 0; i < data.length; i++) {
+       temp_var = L.geoJson(data[i], {style: style(data[i].properties["LeagueofLegends:(2017)"])})
+       l_layer.push(temp_var)
+    }
+    lol_layer = L.layerGroup(l_layer)
+    
+    p_layer = []
+    for (var i = 0; i < data.length; i++) {
+       temp_var = L.geoJson(data[i], {style: style(data[i].properties["PUBG:(2017)"])})
+       p_layer.push(temp_var)
+    }
+    pubg_layer = L.layerGroup(p_layer)
+    
+    var baseMaps = {
+    "Streets": streetmap
+};
+
+var overlayMaps = {
+    "CS:GO": cs_layer,
+    "Dota 2" : dota2_layer,
+    "Fortnite" : frtnite_layer,
+    "LoL" : lol_layer,
+    "PUBG" : pubg_layer
+};
+    
+// Creating the map object
+var myMap = L.map("map", {
+  center: [39.5, -98.35],
+  zoom: 4,
+    layers : [streetmap, cs_layer]
+});
 
 
-// // Get the data with d3.
-// d3.json('/choropleth').then(function(data) {
-//     console.log(data);
-//     for (var i = 0; i < data.length; i++) {
-//         data[i].properties.CENSUSAREA)
-//         console.log(data[i].properties.CENSUSAREA);
-//     }
-// })
+L.control.layers(baseMaps).addTo(myMap);
+L.control.layers(overlayMaps).addTo(myMap);
+    
+    
+    var legend = L.control({position: 'bottomright'});
 
-// data[i].properties["CounterStrike:(2006)"]
+    legend.onAdd = function (map) {
 
-// Now create a legend and add it to the map
-//     var legend = L.control({position: 'bottomright'});
-//     legend.onAdd = function (map) {
-//         var div = L.DomUtil.create('div', 'info legend'),
-//             depths = [0, 10, 30, 50, 70, 90],
-//             labels = [];
-//     };
-//     legend.addTo(myMap);
+    var div = L.DomUtil.create('div', 'info legend'),
+        grades = [0, 14.28, 28.57, 42.85, 57.14, 71.42, 85.71, 99],
+        labels = [];
+
+    // loop through our density intervals and generate a label with a colored square for each interval
+    for (var i = 0; i < grades.length; i++) {
+        div.innerHTML +=
+            '<i style="background:' + getColor(grades[i] + 1) + '"></i> ' +
+            grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+');
+    }
+
+    return div;
+    }
+        
+    legend.addTo(myMap);
+        
+});
