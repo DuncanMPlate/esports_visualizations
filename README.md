@@ -11,3 +11,6 @@ https://esports-visualizations.herokuapp.com/
 
 ##### - Esports Earnings 1998 - 2021:
 - https://www.kaggle.com/rankirsh/esports-earnings
+
+##### - Google Trends (Dota2 vs CS:GO vs Fortnite vs LoL vs PUBG)
+- https://trends.google.com/trends/explore?geo=US&q=%2Fm%2F0h3pv2z,%2Fg%2F11dxbkyrq3,%2Fm%2F0k9bc90,%2Fm%2F0dlkwn1,%2Fm%2F04n3w2r
